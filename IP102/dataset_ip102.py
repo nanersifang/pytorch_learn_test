@@ -8,7 +8,7 @@ from PIL import Image
 from torchvision import transforms as T
 
 transform = T.Compose([
-    T.Resize((32,32)),#缩放图片（Image),保持长宽比不变，最短边为32像素
+    T.Resize((96,96),2),#缩放图片（Image),保持长宽比不变，最短边为32像素
     T.CenterCrop(32), #从图片中间切出32*32的图片
     T.ToTensor(),#将图片（image)转成Tensor，归一化至[0,1]
     #T.Normalize(mean=[.5,.5,.5],std=[.5,.5,.5]) #标准化至[-1,1],规定均值和标准差
@@ -69,7 +69,7 @@ class Dataset_IP102(data.Dataset):
     
     
 if __name__=='__main__':
-    dataset = Dataset_IP102('f:/5.backup/ip102_20201116/ip102_v1.1/',train=True,transforms=transform)
+    dataset = Dataset_IP102('F:/5.datasets/ip102_v1.1/',train=False,transforms=transform)
     #img,label = dataset[0]
     for img,label in dataset:
         print(img.size(),label,dataset.__len__())
