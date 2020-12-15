@@ -68,7 +68,7 @@ class vgg(nn.Module):
     
 class vgg_IP102(nn.Module):
     def __init__(self):
-        super(vgg,self).__init__()
+        super(vgg_IP102,self).__init__()
         self.feature = vgg_net
         self.fc = nn.Sequential(
             nn.Linear(512,256),
@@ -86,23 +86,25 @@ class vgg_IP102(nn.Module):
 #from utils import train
 
 def data_tf(x):
+    x = x.resize((32,32),2) #将图片放大到96*96
     x = np.array(x,dtype='float32')/255
     x = (x-0.5)/0.5 #
     x = x.transpose((2,0,1))
     x = torch.from_numpy(x)
     return x
 
-train_set = CIFAR10('../data',train=True,transform=data_tf)
-train_data = torch.utils.data.DataLoader(train_set,batch_size=64,shuffle=True)
-test_set = CIFAR10('../data',train=False,transform=data_tf)
-test_data = torch.utils.data.DataLoader(test_set,batch_size=128,shuffle=False)
-
-net = vgg()
-optimizer = torch.optim.SGD(net.parameters(),lr=1e-1)
-criterion = nn.CrossEntropyLoss()
-print(len(train_data),len(test_data))
-print('开始训练并测试。。。')
-train(net,train_data,test_data,20,optimizer,criterion)
+if __name__=='__main__':
+    train_set = CIFAR10('../data',train=True,transform=data_tf)
+    train_data = torch.utils.data.DataLoader(train_set,batch_size=64,shuffle=True)
+    test_set = CIFAR10('../data',train=False,transform=data_tf)
+    test_data = torch.utils.data.DataLoader(test_set,batch_size=128,shuffle=False)
+    
+    net = vgg()
+    optimizer = torch.optim.SGD(net.parameters(),lr=1e-1)
+    criterion = nn.CrossEntropyLoss()
+    print(len(train_data),len(test_data))
+    print('开始训练并测试。。。')
+    train(net,train_data,test_data,20,optimizer,criterion)
 
 
 
