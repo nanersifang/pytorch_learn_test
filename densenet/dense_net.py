@@ -37,12 +37,7 @@ class dense_block(nn.Module):
             
         return x
     
-#验证一下输出的channel是否正确
-test_net = dense_block(3,12,3)
-test_x = Variable(torch.zeros(1,3,96,96))
-print('input shape:{}*{}*{}'.format(test_x.shape[1], test_x.shape[2], test_x.shape[3]))
-test_y = test_net(test_x)
-print('output shape:{}*{}*{}'.format(test_y.shape[1], test_y.shape[2], test_y.shape[3]))
+
 
 #除了dense block,DenseNet中还有一个模块叫过渡层（transition block),因为DenseNet会不断地对维度进行拼接，所以当层数
 #很高的时候，输出的通道数就会越来越大，参数和计算量也会越来越大，为了避免这个问题，需要引入过渡层输出通道降低下来，
@@ -105,6 +100,12 @@ def data_tf(x):
     return x
 
 if __name__ == '__main__':
+    #验证一下输出的channel是否正确
+    test_net = dense_block(3,12,3)
+    test_x = Variable(torch.zeros(1,3,96,96))
+    print('input shape:{}*{}*{}'.format(test_x.shape[1], test_x.shape[2], test_x.shape[3]))
+    test_y = test_net(test_x)
+    print('output shape:{}*{}*{}'.format(test_y.shape[1], test_y.shape[2], test_y.shape[3]))
     
     #验证一下过渡层是否正确
     test_net = transition(3,12)
