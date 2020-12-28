@@ -71,8 +71,8 @@ def train(net,train_data,valid_data,num_epochs,optimizer,criterion,net_name='Som
                           train_acc / len(train_data)))
         
         prev_time = cur_time
-        print(epoch_str + time_str)
-        dc.add_paragraph(epoch_str + time_str)
+        print(net_name + epoch_str + time_str)
+        dc.add_paragraph(net_name + epoch_str + time_str)
         
     #保存学习到的网络
     torch.save(net,'../data/'+net_name+'_'+str(datetime.now().date())+'.pkl')
