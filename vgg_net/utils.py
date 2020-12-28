@@ -2,6 +2,7 @@
 from datetime import datetime
 import torch
 from torch.autograd import Variable
+import docx
 
 def get_acc(output,label):
     total = output.shape[0]
@@ -10,6 +11,7 @@ def get_acc(output,label):
     return num_correct/total
 
 def train(net,train_data,valid_data,num_epochs,optimizer,criterion,net_name='SomeNet'):
+    dc = docx.Document()
     if torch.cuda.is_available():
         net = net.cuda()
     prev_time = datetime.now()
@@ -70,8 +72,12 @@ def train(net,train_data,valid_data,num_epochs,optimizer,criterion,net_name='Som
         
         prev_time = cur_time
         print(epoch_str + time_str)
+        dc.add_paragraph(epoch_str + time_str)
+        
     #保存学习到的网络
     torch.save(net,'../data/'+net_name+'_'+str(datetime.now().date())+'.pkl')
+    #保存日志
+    dc.save('../data/'+net_name+'_'+str(datetime.now().date())+'.docx')
             
         
             
