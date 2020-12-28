@@ -17,13 +17,13 @@ file_dir = 'F:/5.datasets/ip102_v1.1/'
 train_dataset = Dataset_IP102(file_dir,train=True,transforms=data_tf)
 train_data = t.utils.data.DataLoader(train_dataset,
                                      batch_size=64,#14
-                                     shuffle=False,
+                                     shuffle=True,
                                      drop_last=True)
 
 test_dataset = Dataset_IP102(file_dir,train=False,transforms=data_tf)
 test_data = t.utils.data.DataLoader(test_dataset,
                                      batch_size=64,#14
-                                     shuffle=False,
+                                     shuffle=True,
                                      drop_last=True)
 
 net = resnet(3,102)

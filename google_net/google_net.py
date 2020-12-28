@@ -122,10 +122,7 @@ class googlenet(nn.Module):
         
         return x
     
-test_net = googlenet(3,10,True)
-test_x = Variable(torch.zeros(1,3,96,96))
-test_y = test_net(test_x)
-print('output:{}'.format(test_y.shape))
+
 
 from vgg_net import utils
 def data_tf(x):
@@ -136,17 +133,24 @@ def data_tf(x):
     x = torch.from_numpy(x)
     return x
 
-train_set = CIFAR10('../data',train=True,transform=data_tf)
-train_data = torch.utils.data.DataLoader(train_set,batch_size=16,shuffle=True)
 
-test_set = CIFAR10('../data',train=False,transform=data_tf)
-test_data = torch.utils.data.DataLoader(test_set,batch_size=32,shuffle=True)
-
-net= googlenet(3,10)
-optimizer = torch.optim.SGD(net.parameters(),lr=0.01)
-criterion = nn.CrossEntropyLoss()
-
-utils.train(net,train_data,test_data,20,optimizer,criterion)
-
-        
+if __name__=='__main__':
+    test_net = googlenet(3,10,True)
+    test_x = Variable(torch.zeros(1,3,96,96))
+    test_y = test_net(test_x)
+    print('output:{}'.format(test_y.shape))
+    
+    train_set = CIFAR10('../data',train=True,transform=data_tf)
+    train_data = torch.utils.data.DataLoader(train_set,batch_size=16,shuffle=True)
+    
+    test_set = CIFAR10('../data',train=False,transform=data_tf)
+    test_data = torch.utils.data.DataLoader(test_set,batch_size=32,shuffle=True)
+    
+    net= googlenet(3,10)
+    optimizer = torch.optim.SGD(net.parameters(),lr=0.01)
+    criterion = nn.CrossEntropyLoss()
+    
+    utils.train(net,train_data,test_data,20,optimizer,criterion)
+    
+            
         
