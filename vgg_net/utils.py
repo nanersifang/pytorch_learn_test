@@ -58,7 +58,7 @@ def train(net,train_data,valid_data,num_epochs,optimizer,criterion,net_name='Som
                 loss = criterion(output,label)
                 valid_loss += loss.item()
                 valid_acc += get_acc(output,label)
-                print(valid_acc,output,label)
+                #print(valid_acc,output,label)
             epoch_str = (
                 "Epoch %d. Train Loss: %f, Train Acc: %f, Valid Loss:%f,Valid Acc: %f, "%(epoch,train_loss/len(train_data),
                 train_acc  / len(train_data),
