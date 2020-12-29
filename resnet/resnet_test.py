@@ -6,7 +6,7 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 from torch.autograd import Variable
-#from torchvision.datasets import CIFAR10
+from torchvision.datasets import CIFAR10
 
 def conv33(in_channel,out_channel,stride=1):
     return nn.Conv2d(in_channel,out_channel,3,stride=stride,padding=1,bias=False)
@@ -37,12 +37,7 @@ class residual_block(nn.Module):
         return F.relu(x+out,True)
    
 '''
-#输入输出形状相同
-test_net = residual_block(3,32,False)
-test_x = Variable(torch.zeros(1,3,96,96))
-print('input:{}'.format(test_x.shape))
-test_y = test_net(test_x)
-print('output:{}'.format(test_y.shape))
+
 '''
 #下面我们尝试实现一个ResNet，它就是residual block模块的堆叠
 class resnet(nn.Module):
@@ -101,14 +96,7 @@ class resnet(nn.Module):
         
         return x
     
-'''
-#输出一下每个block之后的大小
-test_net = resnet(3,10,True)
-test_x = Variable(torch.zeros(1,3,96,96))
-test_y = test_net(test_x)
-print('output:{}'.format(test_y.shape))
 
-'''
 import sys
 import os
 #得到当前根目录
@@ -122,19 +110,28 @@ def data_tf(x):
     x = x.transpose((2,0,1)) #将channel放到第一维，只是pytorch要求的输入方式
     x = torch.from_numpy(x)
     return x
-'''
-train_set = CIFAR10('../data',train=True,transform=data_tf)
-train_data = torch.utils.data.DataLoader(train_set,batch_size=64,shuffle=True)
 
-test_set = CIFAR10('../data',train=False,transform=data_tf)
-test_data = torch.utils.data.DataLoader(test_set,batch_size=128,shuffle=True)
+if __name__ == '__main__':
+    #输入输出形状相同
+    
+    test_net = residual_block(3,32,False)
+    test_x = Variable(torch.zeros(1,3,96,96))
+    print('input:{}'.format(test_x.shape))
+    test_y = test_net(test_x)
+    print('output:{}'.format(test_y.shape))
+    
+    train_set = CIFAR10('../data',train=True,transform=data_tf)
+    train_data = torch.utils.data.DataLoader(train_set,batch_size=64,shuffle=True)
+    
+    test_set = CIFAR10('../data',train=False,transform=data_tf)
+    test_data = torch.utils.data.DataLoader(test_set,batch_size=128,shuffle=True)
+    
+    net= resnet(3,10)
+    optimizer = torch.optim.SGD(net.parameters(),lr=0.01)
+    criterion = nn.CrossEntropyLoss()
+    
+    utils.train(net,train_data,test_data,20,optimizer,criterion)
 
-net= resnet(3,10)
-optimizer = torch.optim.SGD(net.parameters(),lr=0.01)
-criterion = nn.CrossEntropyLoss()
-
-utils.train(net,train_data,test_data,20,optimizer,criterion)
-'''
 
 
 

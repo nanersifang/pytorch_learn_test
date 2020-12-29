@@ -2,7 +2,7 @@
 
 
 import torch as t
-from dense_net import densenet,data_tf
+from resnet_test import resnet,data_tf
 import os,sys
 
 #得到当前根目录
@@ -28,9 +28,9 @@ for k,v in plant.items():
                                          shuffle=True,
                                          drop_last=True)
     
-    net = densenet(3,102)
+    net = resnet(3,102)
     optimizer = t.optim.SGD(net.parameters(),lr=0.01)
     criterion = t.nn.CrossEntropyLoss()
     
-    utils.train(net,train_data,test_data,50,optimizer,criterion,'densenet'+ '_on_'+ k)
+    utils.train(net,train_data,test_data,50,optimizer,criterion,'resnet'+ '_on_'+ k)
     print('\n')

@@ -51,12 +51,7 @@ class inception(nn.Module):
         output = torch.cat((f1,f2,f3,f4),dim=1)
         return output
     
-test_net = inception(3,64,48,64, 64, 96, 32)
-test_x = Variable(torch.zeros(1,3,96,96))
-print('input shape :{} * {} * {}'.format(test_x.shape[1],test_x.shape[2],test_x.shape[3]))
 
-test_y = test_net(test_x)
-print('output shape:{}*{}*{}'.format(test_y.shape[1],test_y.shape[2],test_y.shape[3]))
 
 class googlenet(nn.Module):
     def __init__(self,in_channel,num_classes,verbose=False):
@@ -135,6 +130,12 @@ def data_tf(x):
 
 
 if __name__=='__main__':
+    test_net = inception(3,64,48,64, 64, 96, 32)
+    test_x = Variable(torch.zeros(1,3,96,96))
+    print('input shape :{} * {} * {}'.format(test_x.shape[1],test_x.shape[2],test_x.shape[3]))
+    
+    test_y = test_net(test_x)
+    print('output shape:{}*{}*{}'.format(test_y.shape[1],test_y.shape[2],test_y.shape[3]))
     test_net = googlenet(3,10,True)
     test_x = Variable(torch.zeros(1,3,96,96))
     test_y = test_net(test_x)

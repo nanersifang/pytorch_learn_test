@@ -23,13 +23,7 @@ def vgg_block(num_convs, in_channels, out_channels):
     net.append(nn.MaxPool2d(2,2))#定义池化层
     return nn.Sequential(*net)
 
-block_demo = vgg_block(3,64,128)
-print(block_demo)
 
-#首先定义输入为(1,64,300,300)
-input_demo = Variable(torch.zeros(1,64,300,300))
-output_demo = block_demo(input_demo)
-print(output_demo.shape)
 
 #定义vgg block进行堆叠
 def vgg_stack(num_convs,channels):
@@ -41,14 +35,7 @@ def vgg_stack(num_convs,channels):
     
     return nn.Sequential(*net)
 
-#作为实例，我们定义一个稍微简单一点的vgg结构，其中有8个卷积层
-vgg_net = vgg_stack((1,1,2,2,2),((3,64),(64,128),(128,256),(256,512),(512,512)))
-print(vgg_net)
 
-test_x = Variable(torch.zeros(1,3,256,256))
-test_y = vgg_net(test_x)
-
-print(test_y.shape)#可以看到图片减小了2**5倍，最后再加上几层全连接层，就能够得到我们想要的分类输出
 
 class vgg(nn.Module):
     def __init__(self):
@@ -94,6 +81,25 @@ def data_tf(x):
     return x
 
 if __name__=='__main__':
+    block_demo = vgg_block(3,64,128)
+    print(block_demo)
+    
+    #首先定义输入为(1,64,300,300)
+    input_demo = Variable(torch.zeros(1,64,300,300))
+    output_demo = block_demo(input_demo)
+    print(output_demo.shape)
+    
+    
+    
+    #作为实例，我们定义一个稍微简单一点的vgg结构，其中有8个卷积层
+    vgg_net = vgg_stack((1,1,2,2,2),((3,64),(64,128),(128,256),(256,512),(512,512)))
+    print(vgg_net)
+    
+    test_x = Variable(torch.zeros(1,3,256,256))
+    test_y = vgg_net(test_x)
+
+    print(test_y.shape)#可以看到图片减小了2**5倍，最后再加上几层全连接层，就能够得到我们想要的分类输出
+    
     train_set = CIFAR10('../data',train=True,transform=data_tf)
     train_data = torch.utils.data.DataLoader(train_set,batch_size=64,shuffle=True)
     test_set = CIFAR10('../data',train=False,transform=data_tf)
