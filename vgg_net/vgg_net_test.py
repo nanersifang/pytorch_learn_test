@@ -35,7 +35,9 @@ def vgg_stack(num_convs,channels):
     
     return nn.Sequential(*net)
 
-
+#作为实例，我们定义一个稍微简单一点的vgg结构，其中有8个卷积层
+vgg_net = vgg_stack((1,1,2,2,2),((3,64),(64,128),(128,256),(256,512),(512,512)))
+#print(vgg_net)
 
 class vgg(nn.Module):
     def __init__(self):

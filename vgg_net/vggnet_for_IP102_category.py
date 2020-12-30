@@ -28,7 +28,7 @@ for k,v in plant.items():
                                          shuffle=True,
                                          drop_last=True)
     
-    net = vgg_IP102(3,102)
+    net = vgg_IP102()
     optimizer = t.optim.SGD(net.parameters(),lr=0.01)
     criterion = t.nn.CrossEntropyLoss()
     
