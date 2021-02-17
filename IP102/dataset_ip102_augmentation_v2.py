@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+#对数据集进行数据增强，数据增强后返回结果。这个只为生成更多数据所用，是中间版本，不能直接使用。2021年2月17日
+#这里把每张图片生成了新的另外25张数据增强后的图片，每一张都是pipline随机组合的数据增强生成的，所以每张图片都不一样
 
 
 #import torch as t
@@ -7,6 +9,35 @@ from torch.utils import data
 import os
 from PIL import Image
 from torchvision import transforms as T
+
+#为了数据增强新加的库
+import torchvision.transforms.functional as TF
+from imgaug import augmenters as iaa
+import imageio
+import matplotlib.pyplot as plt
+
+# Define an augmentation pipeline
+aug_pipeline = iaa.Sequential([
+    iaa.Sometimes(0.5, iaa.GaussianBlur((0, 3.0))), # apply Gaussian blur with a sigma between 0 and 3 to 50% of the images
+    # apply one of the augmentations: Dropout or CoarseDropout
+    iaa.OneOf([
+        iaa.Dropout((0.01, 0.1), per_channel=0.5), # randomly remove up to 10% of the pixels
+        iaa.CoarseDropout((0.03, 0.15), size_percent=(0.02, 0.05), per_channel=0.2),
+    ]),
+    # apply from 0 to 3 of the augmentations from the list
+    iaa.SomeOf((0, 3),[
+        iaa.Sharpen(alpha=(0, 1.0), lightness=(0.75, 1.5)), # sharpen images
+        iaa.Emboss(alpha=(0, 1.0), strength=(0, 2.0)), # emboss images
+        iaa.Fliplr(1.0), # horizontally flip
+        iaa.Sometimes(0.5, iaa.CropAndPad(percent=(-0.25, 0.25))), # crop and pad 50% of the images
+        iaa.Sometimes(0.5, iaa.Affine(rotate=(-180,180))) # rotate the images
+    ])
+],
+random_order=True # apply the augmentations in random order
+)
+
+# Define the augmentations
+AUG_TRAIN = aug_pipeline # use our pipeline as train augmentations
 
 transform = T.Compose([
     T.Resize((96,96),2),#缩放图片（Image),保持长宽比不变，最短边为32像素
@@ -34,10 +65,10 @@ plant = {'rice':rice,
          'mango':mango,
          }
 
-class Dataset_IP102(data.Dataset):
-    def __init__(self,root,train = True,transforms=None,category=[x for x in range(0,102)]):
+class Dataset_IP102_Augmentation(data.Dataset):
+    def __init__(self,root,train = True,transforms=None,category=[x for x in range(0,102)],augmentations = AUG_TRAIN):
         #定义取训练集的数据集
-        
+        self.augmentations = augmentations
         self.root = root
         self.dict_labels = dict()
         self.transforms = transforms
@@ -79,12 +110,33 @@ class Dataset_IP102(data.Dataset):
         img_path = self.lst[index]
         #dog->1,cat->0
         label = self.lst[index][1]
-        data = Image.open(self.root+'/images/'+img_path[0] + '.jpg')
-        data = data.convert('RGB')
+        
+        
+        try:
+            for i in range(1,26):
+                data = imageio.imread(self.root+'/images/'+img_path[0] + '.jpg')
+                data = self.augmentations.augment_image(data)
+                imageio.imwrite(r'F:/5.datasets/test/aug_images/'+img_path[0] + '-aug_pipline' + str(i) +  '.jpg',data)
+            data = Image.open(r'F:/5.datasets/test/aug_images/'+img_path[0] + '-aug_pipline1.jpg')
+        except Exception as e:
+            print(e)
+        finally:
+            data = Image.open(self.root+'/images/'+img_path[0] + '.jpg')
+        #data = data.convert('RGB')
         #array = np.asarray(pil_img)
         #data = t.from_numpy(array)
+        #plt.imshow(data)
+        
+        #plt.imshow(data)
+        #data = Image.open(r'F:/5.datasets/test/aug_images/'+img_path[0] + '-aug_pipline.jpg')
+        data = data.convert('RGB')
+        
         if self.transforms:
+            #data = self.transforms(TF.to_tensor(data))
             data = self.transforms(data)
+            
+        
+        #data = TF.to_tensor(self.augmentations.augment_image(data))
         return data,label
     
     def __len__(self):
@@ -94,11 +146,18 @@ def show_category_len():
     file_dir = 'F:/5.datasets/IP102_V2.1'
     #print('train')
     for k,v in plant.items():
-        train_dataset = Dataset_IP102(file_dir,train=True,transforms=transform,category=v)
+        train_dataset = Dataset_IP102_Augmentation(file_dir,train=True,transforms=transform,category=v)
         print('train:' + k  + ' ' + str(train_dataset.__len__()))
+        #print(next(train_dataset))
         
-        test_dataset = Dataset_IP102(file_dir,train=False,transforms=transform,category=v)
+        test_dataset = Dataset_IP102_Augmentation(file_dir,train=False,transforms=transform,category=v)
         print('test:' + k + ' ' + str(test_dataset.__len__()))
+        #print(next(test_dataset))
+        
+        train_dataset[0]
+        test_dataset[0]
+        
+        
         
         
 

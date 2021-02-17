@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+#这个程序是为临时获取更多的数据参与训练所用，是一个过渡版本，以后还需要升级，2021。2。17
 
 #import torch as t
 from torch.utils import data
@@ -50,9 +50,16 @@ class Dataset_IP102(data.Dataset):
                     str_txt = line.split(' ')
                     class_num = str_txt[1].replace('\n','')
                     if not os.path.exists(root+'/images/'+str_txt[0]) or class_num not in category:
-                        continue
-                    
+                            continue
+                        
                     self.dict_labels[str(str_txt[0])[:-4]] = int(class_num)
+                    
+                    #把数据增强后的图片也加入到训练集中
+                    for i in range(1,26):
+                        if not os.path.exists(root+'/images/'+str_txt[0][:-4] + 'augmentation' + str(i) +'.jpg') or class_num not in category:
+                            continue
+                        
+                        self.dict_labels[str(str_txt[0])[:-4]] = int(class_num)
                               
             #imgs = os.listdir(root)
             #所有的图片的绝对路径
