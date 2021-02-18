@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 #这个程序是为临时获取更多的数据参与训练所用，是一个过渡版本，以后还需要升级，2021。2。17
+#经过修改这个程序只用于进行val.txt中数据的提取，用于做测试
 
 #import torch as t
 from torch.utils import data
@@ -34,7 +35,7 @@ plant = {'rice':rice,
          'mango':mango,
          }
 
-class Dataset_IP102_Augmentation(data.Dataset):
+class Dataset_IP102(data.Dataset):
     def __init__(self,root,train = True,transforms=None,category=[x for x in range(0,102)]):
         #定义取训练集的数据集
         
@@ -56,11 +57,10 @@ class Dataset_IP102_Augmentation(data.Dataset):
                     
                     #把数据增强后的图片也加入到训练集中
                     for i in range(1,26):
-                        #print(root+'/images/'+str_txt[0][:-4] + '-aug_pipline' + str(i) +'.jpg')
-                        if not os.path.exists(root+'/images/'+str_txt[0][:-4] + '-aug_pipline' + str(i) +'.jpg'):
+                        if not os.path.exists(root+'/images/'+str_txt[0][:-4] + 'augmentation' + str(i) +'.jpg') or class_num not in category:
                             continue
                         
-                        self.dict_labels[str_txt[0][:-4] + '-aug_pipline' + str(i)] = int(class_num)
+                        self.dict_labels[str(str_txt[0])[:-4]] = int(class_num)
                               
             #imgs = os.listdir(root)
             #所有的图片的绝对路径
