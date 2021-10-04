@@ -75,9 +75,10 @@ def train(net,train_data,valid_data,num_epochs,optimizer,criterion,net_name='Som
         dc.add_paragraph(net_name + ' ' + epoch_str + time_str)
         
     #保存学习到的网络
-    torch.save(net,'../data/'+net_name+'_'+str(datetime.now().date())+'.pkl')
+    torch.save(net.state_dict() ,'../data/'+net_name+'_'+str(datetime.now().date())+'.pkl')
     #保存日志
     dc.save('../data/'+net_name+'_'+str(datetime.now().date())+'.docx')
+    return net
             
         
             
